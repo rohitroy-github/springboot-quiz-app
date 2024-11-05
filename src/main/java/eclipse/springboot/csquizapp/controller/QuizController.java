@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eclipse.springboot.csquizapp.service.QuizService;
+
 @RestController
 @RequestMapping("quiz")
 public class QuizController {
@@ -18,7 +20,7 @@ public class QuizController {
 	@PostMapping("create")
 	public ResponseEntity<String> createQuiz(@RequestParam String category, @RequestParam int numQ, @RequestParam String title) { 
 		
-		return new ResponseEntity<String>("I'm here", HttpStatus.OK);
+		return quizService.createQuiz(category, numQ, title);
 	}
 
 }
