@@ -28,16 +28,24 @@ public class QuizService {
 	
 	public ResponseEntity<String> createQuiz(String category, int numQ, String title) { 
 		
-		List<Question> questions = questionDao.findRandomQuestionsByCategory(category, numQ);
+		try {
+			
+			List<Question> questions = questionDao.findRandomQuestionsByCategory(category, numQ);
+			
+			
+			Quiz quiz = new Quiz();
+			quiz.setTitle(title);
+			quiz.setQuestions(questions);
+			
+			quizDao.save(quiz);
+			
+			return new ResponseEntity<>("Quiz successfully created", HttpStatus.CREATED);
+			
+		} catch (Exception e) {
+	        e.printStackTrace();
+		}
 		
-		
-		Quiz quiz = new Quiz();
-		quiz.setTitle(title);
-		quiz.setQuestions(questions);
-		
-		quizDao.save(quiz);
-		
-		return new ResponseEntity<>("Quiz successfully created", HttpStatus.CREATED);
+		return new ResponseEntity<>("There's some issue in creating this quiz !", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@Transactional
@@ -70,27 +78,36 @@ public class QuizService {
 	        
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
+	    
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@Transactional
 	public ResponseEntity<Integer> calaculateResult(Integer id, List<Response> responses) { 
 		
-		Quiz quiz = quizDao.findById(id).get();
-		List<Question> questions = quiz.getQuestions();
-		int right = 0;
-		int i = 0;
-		
-		for(Response response : responses) { 
-			if(response.getResponse().equals(questions.get(i).getRightAnswer()))
-			{
-				right++; 
+		try {
+			
+			Quiz quiz = quizDao.findById(id).get();
+			List<Question> questions = quiz.getQuestions();
+			int right = 0;
+			int i = 0;
+			
+			for(Response response : responses) { 
+				if(response.getResponse().equals(questions.get(i).getRightAnswer()))
+				{
+					right++; 
+				}
+				i++;
 			}
-			i++;
+			
+			return new ResponseEntity<>(right, HttpStatus.OK);
+			
+		} catch (Exception e) {
+			  e.printStackTrace();
 		}
 		
-		return new ResponseEntity<>(right, HttpStatus.OK);
+		return new ResponseEntity<>(0, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 }
