@@ -14,6 +14,7 @@ import eclipse.springboot.csquizapp.dao.QuizDao;
 import eclipse.springboot.csquizapp.model.Question;
 import eclipse.springboot.csquizapp.model.QuestionWrapper;
 import eclipse.springboot.csquizapp.model.Quiz;
+import eclipse.springboot.csquizapp.model.Response;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -72,7 +73,24 @@ public class QuizService {
 	        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
 	
+	@Transactional
+	public ResponseEntity<Integer> calaculateResult(Integer id, List<Response> responses) { 
+		
+		Quiz quiz = quizDao.findById(id).get();
+		List<Question> questions = quiz.getQuestions();
+		int right = 0;
+		int i = 0;
+		
+		for(Response response : responses) { 
+			if(response.getResponse().equals(questions.get(i).getRightAnswer()))
+			{
+				right++; 
+			}
+			i++;
+		}
+		
+		return new ResponseEntity<>(right, HttpStatus.OK);
+	}
 	
 }
