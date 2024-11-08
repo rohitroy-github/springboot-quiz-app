@@ -38,6 +38,14 @@ public class QuizController {
 		
 	}
 	
+//	purpose: testing
+	@GetMapping("getallquizdetails/{id}")
+	public ResponseEntity<List<Question>> getAllQuizDetails(@PathVariable Integer id) { 
+		
+		return quizService.getAllQuizDetails(id);
+		
+	}
+	
 	@PostMapping("submit/{id}")
 	public ResponseEntity<Integer> submitQuiz(@PathVariable Integer id, @RequestBody List<Response> responses) { 
 		

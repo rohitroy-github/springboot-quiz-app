@@ -83,6 +83,46 @@ public class QuizService {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
+//	purpose: testing
+	@Transactional
+	public ResponseEntity<List<Question>> getAllQuizDetails(Integer id) { 
+	    try {
+	        Optional<Quiz> quiz = quizDao.findById(id);
+	        
+	        // Check if the quiz is present
+	        if (quiz.isPresent()) {
+	            List<Question> questionsFromDB = quiz.get().getQuestions();
+	            
+	            List<Question> questionsForUser = new ArrayList<>();
+
+	            for (Question q : questionsFromDB) { 
+	            	Question qw = new Question(
+	                    q.getId(), 
+	                    q.getCategory(),
+	                    q.getDifficultyLevel(),
+	                    q.getOption1(), 
+	                    q.getOption2(), 
+	                    q.getOption3(), 
+	                    q.getOption4(),
+	                    q.getRightAnswer(),
+	                    q.getQuestionTitle()
+	                );
+	                questionsForUser.add(qw);
+	            }
+	            
+	            return new ResponseEntity<>(questionsFromDB, HttpStatus.OK); 
+	        } else {
+	            // Return an error response if the quiz is not found
+	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
 	@Transactional
 	public ResponseEntity<Integer> calaculateResult(Integer id, List<Response> responses) { 
 		
